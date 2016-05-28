@@ -3,11 +3,11 @@ library(stringr)
 dir="your_dir"
 
 ####### cluster mapping data #######
-mapping=read.table(file =paste0(dir,"cluster_map\\cluster_map"))
+mapping=read.table(file =paste0(dir,"cluster_map//cluster_map"))
 colnames(mapping)=c('cluster','id')
 mapping=data.table(mapping)
 
-poi=readLines(file(paste0(dir,"poi_data\\poi_data")))
+poi=readLines(file(paste0(dir,"poi_data//poi_data")))
 colnames(mapping)=c('cluster','id')
 mapping=data.table(mapping)
 
@@ -70,7 +70,7 @@ parse.poi=function(poi){
 }
 poi.dat=parse.poi(poi)
 ####### weather data #######
-weather.files=list.files(paste0(dir,"weather_data\\"),full.names=T)
+weather.files=list.files(paste0(dir,"weather_data//"),full.names=T)
 weather.dat=data.frame()
 
 for(wf in weather.files){
@@ -84,7 +84,7 @@ weather.dat=cbind(weather.dat,datetime=weather.dat[,strptime(paste(as.character(
 weather.dat[,timeslice:=ceiling(as.numeric(difftime(datetime,as.POSIXct(as.character(day),tz="GMT"),units = 'mins'))/10)]
 
 ####### traffic data #######
-traffic.files=list.files(paste0(dir,"traffic_data\\"),full.names=T)
+traffic.files=list.files(paste0(dir,"traffic_data//"),full.names=T)
 traffic.dat=data.frame()
 
 for(tf in traffic.files){
@@ -115,7 +115,7 @@ traffic.dat[,V6:=NULL]
 traffic.dat[,V7:=NULL]
 
 ####### order data #######
-order.files=list.files(paste0(dir,"order_data\\"),full.names=T)
+order.files=list.files(paste0(dir,"order_data//"),full.names=T)
 order.dat=data.frame()
 
 for(of in order.files){
@@ -139,5 +139,10 @@ order.dat[,gap:=sum(is.na(driver_id)),by=.(start_district_id,day,timeslice)]
 gap=order.dat[,sum(is.na(driver_id)),by=.(start_district_id,day,timeslice)]
 colnames(gap)[4]='gap'
 
-####### final data #######
-# mapping,order.dat,poi.dat,traffic.dat,weather.dat
+gap[,weekday:=as.numeric(factor(weekdays(day),ordered=T))]
+setkeyv(gap,c('start_district_id','day','timeslice'))
+setkeyv(traffic.dat,c('id','day','timeslice'))
+gap.dat=gap[traffic.dat,nomatch=0]
+setkeyv(gap.dat,c('day','timeslice'))
+setkeyv(weather.dat,c('day','timeslice'))
+gap.dat=gap.dat[weather.dat,nomatch=0]
