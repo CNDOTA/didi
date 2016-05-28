@@ -68,7 +68,7 @@ parse.poi=function(poi){
   
   poi.matrix
 }
-
+poi.dat=parse.poi(poi)
 ####### weather data #######
 weather.files=list.files(paste0(dir,"weather_data\\"),full.names=T)
 weather.dat=data.frame()
