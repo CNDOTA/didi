@@ -123,7 +123,6 @@ for(of in order.files){
   order.dat=rbind(order.dat,fread(of,na.strings="NULL"))
   gc()
 }
-
 setnames(order.dat,c('order_id','driver_id','passenger_id','start_district_hash','dest_district_hash','price','datetime'))
 setkey(order.dat,'start_district_hash')
 order.dat=order.dat[mapping]
@@ -136,3 +135,9 @@ order.dat[,dest_district_hash:=NULL]
 order.dat[,datetime:=as.POSIXct(datetime,tz='GMT')]
 order.dat[,day:=as.Date(datetime,tz='GMT')]
 order.dat[,timeslice:=ceiling(as.numeric(difftime(datetime,day,units = 'mins'))/10)]
+order.dat[,gap:=sum(is.na(driver_id)),by=.(start_district_id,day,timeslice)]
+gap=order.dat[,sum(is.na(driver_id)),by=.(start_district_id,day,timeslice)]
+colnames(gap)[4]='gap'
+
+####### final data #######
+# mapping,order.dat,poi.dat,traffic.dat,weather.dat
