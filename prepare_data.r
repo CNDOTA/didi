@@ -1,7 +1,7 @@
 library(data.table)
 library(stringr)
-dir="your_dir"
 
+prepare_data=function(dir){
 ####### cluster mapping data #######
 mapping=read.table(file =paste0(dir,"cluster_map//cluster_map"))
 colnames(mapping)=c('cluster','id')
@@ -18,7 +18,7 @@ parse.poi=function(poi){
   l3=c()
   for (poi.line in poi){
     line=strsplit(poi.line,'\t')[[1]]
-    
+
     for (i in 2:length(line))
     {
       e=strsplit(line[i],':')[[1]]
@@ -47,7 +47,7 @@ parse.poi=function(poi){
   colnames(poi.matrix)=paste0("poi_",poi.names)
   poi.matrix
   for(i in 1:length(poi)){
-    
+
     line=strsplit(poi[i],'\t')[[1]]
     rowId=mapping[cluster==line[1],id]
     for (e in line[2:length(line)]){
@@ -65,7 +65,7 @@ parse.poi=function(poi){
       poi.matrix[rowId,l1.name]=poi.matrix[rowId,l1.name]+poi.matrix[rowId,e]
     }
   }
-  
+
   poi.matrix
 }
 poi.dat=parse.poi(poi)
@@ -141,8 +141,62 @@ colnames(gap)[4]='gap'
 
 gap[,weekday:=as.numeric(factor(weekdays(day),ordered=T))]
 setkeyv(gap,c('start_district_id','day','timeslice'))
-setkeyv(traffic.dat,c('id','day','timeslice'))
-gap.dat=gap[traffic.dat,nomatch=0]
-setkeyv(gap.dat,c('day','timeslice'))
-setkeyv(weather.dat,c('day','timeslice'))
-gap.dat=gap.dat[weather.dat,nomatch=0]
+
+
+gap.temp=copy(gap)
+gap.temp[,timeslice1:=timeslice+1]
+gap.temp[,timeslice2:=timeslice+2]
+gap.temp[,timeslice3:=timeslice+3]
+gap.temp[,timeslice:=NULL]
+gap.temp[,weekday:=NULL]
+colnames(gap.temp)[3]='gap_past'
+# join gap and gap 10, 20, 30 minutes before
+setkeyv(gap.temp,c('start_district_id','day','timeslice1'))
+gap=gap.temp[gap][,.(start_district_id,day, gap_past,gap, weekday,timeslice1)]
+colnames(gap)[c(3,6)]=c('gap_past_1','timeslice')
+
+setkeyv(gap,c('start_district_id','day','timeslice'))
+setkeyv(gap.temp,c('start_district_id','day','timeslice2'))
+gap=gap.temp[gap][,.(start_district_id,day, gap_past,gap, weekday,timeslice2,gap_past_1)]
+colnames(gap)[c(3,6)]=c('gap_past_2','timeslice')
+
+setkeyv(gap,c('start_district_id','day','timeslice'))
+setkeyv(gap.temp,c('start_district_id','day','timeslice3'))
+gap=gap.temp[gap][,.(start_district_id,day, gap_past,gap, weekday,timeslice3,gap_past_1,gap_past_2)]
+colnames(gap)[c(3,6)]=c('gap_past_3','timeslice')
+gap=gap[,.( start_district_id,day,timeslice,weekday,gap,gap_past_1 ,gap_past_2,gap_past_3)]
+
+
+traffic.temp=traffic.dat[,.(id,traffic_l1,traffic_l2,traffic_l3,traffic_l4,day,timeslice)]
+traffic.temp[,timeslice1:=timeslice+1]
+traffic.temp[,timeslice2:=timeslice+2]
+traffic.temp[,timeslice3:=timeslice+3]
+traffic.temp[,timeslice:=NULL]
+colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past1','traffic_l1_past2','traffic_l1_past3','traffic_l1_past4')
+setkeyv(traffic.temp,c('id','day','timeslice1'))
+
+gap=traffic.temp[gap][,.(id, traffic_l1_past1, traffic_l1_past2 ,traffic_l1_past3,traffic_l1_past4,day,timeslice1,weekday, gap, gap_past_1,gap_past_2,gap_past_3)]
+colnames(gap)[c(7)]='timeslice'
+
+setkeyv(gap,c('id','day','timeslice'))
+colnames(traffic.temp)[c(2:5)]=c('traffic_l2_past1','traffic_l2_past2','traffic_l2_past3','traffic_l2_past4')
+setkeyv(traffic.temp,c('id','day','timeslice2'))
+gap=traffic.temp[gap]
+gap[,timeslice1:=NULL]
+gap[,timeslice3:=NULL]
+colnames(gap)[c(7)]='timeslice'
+
+setkeyv(gap,c('id','day','timeslice'))
+colnames(traffic.temp)[c(2:5)]=c('traffic_l3_past1','traffic_l3_past2','traffic_l3_past3','traffic_l3_past4')
+setkeyv(traffic.temp,c('id','day','timeslice3'))
+gap=traffic.temp[gap]
+gap[,timeslice1:=NULL]
+gap[,timeslice2:=NULL]
+colnames(gap)[c(7)]='timeslice'
+gap=gap[,.(id,day,timeslice,weekday,gap,gap_past_1,gap_past_2,gap_past_3,traffic_l1_past1 ,traffic_l1_past2, traffic_l1_past3, traffic_l1_past4,traffic_l2_past1 ,traffic_l2_past2, traffic_l2_past3, traffic_l2_past4,traffic_l3_past1 ,traffic_l3_past2, traffic_l3_past3, traffic_l3_past4)]
+return(list('gap'=gap,'mapping'=mapping,'poi.dat'=poi.dat,'weather.dat'=weather.dat,'traffic.dat'=traffic.dat,'order.dat'=order.dat))
+}
+train_dir="your_dir"
+test_dir="your_dir"
+train.dat=prepare_data(train_dir)
+test.dat=prepare_data(test_dir)
