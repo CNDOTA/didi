@@ -495,6 +495,8 @@ prepare_test_data=function(dir){
   gap.temp[,timeslice1:=timeslice+1]
   gap.temp[,timeslice2:=timeslice+2]
   gap.temp[,timeslice3:=timeslice+3]
+  gap.temp[,timeslice4:=timeslice+4]
+  
   gap.temp[,timeslice:=NULL]
   gap.temp[,weekday:=NULL]
   colnames(gap.temp)[3]='gap_past'
@@ -562,6 +564,8 @@ prepare_test_data=function(dir){
   placed.temp[,timeslice1:=timeslice+1]
   placed.temp[,timeslice2:=timeslice+2]
   placed.temp[,timeslice3:=timeslice+3]
+  placed.temp[,timeslice4:=timeslice+4]
+  
   placed.temp[,timeslice:=NULL]
   
   colnames(placed.temp)[3]='placed_past'
@@ -593,6 +597,8 @@ prepare_test_data=function(dir){
   total.temp[,timeslice1:=timeslice+1]
   total.temp[,timeslice2:=timeslice+2]
   total.temp[,timeslice3:=timeslice+3]
+  total.temp[,timeslice4:=timeslice+4]
+  
   total.temp[,timeslice:=NULL]
   
   colnames(total.temp)[3]='total_past'
