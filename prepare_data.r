@@ -213,7 +213,7 @@ prepare_train_data=function(dir){
   colnames(total)[4]='total'
   
   setkeyv(placed,c('start_district_id','day','timeslice'))
-
+  
   placed.temp=copy(placed)
   placed.temp[,timeslice1:=timeslice+1]
   placed.temp[,timeslice2:=timeslice+2]
@@ -271,7 +271,7 @@ prepare_train_data=function(dir){
   total=total.temp[total][,.(start_district_id,day, total_past,total, timeslice3,total_past_1,total_past_2)]
   colnames(total)[c(3,5)]=c('total_past_3','timeslice')
   total=total[,.( start_district_id,day,timeslice,total,total_past_1 ,total_past_2,total_past_3)]
-
+  
   setkeyv(total,c('start_district_id','day','timeslice'))
   setkeyv(total.temp,c('start_district_id','day','timeslice4'))
   total=total.temp[total][,.(start_district_id,day, total_past,total, timeslice4,total_past_1,total_past_2,total_past_3)]
@@ -318,7 +318,10 @@ prepare_train_data=function(dir){
   gap[,timeslice1:=NULL]
   gap[,timeslice2:=NULL]
   colnames(gap)[c(5)]='timeslice'
-    
+  gap[,ratio_past_1:=placed_past_1/total_past_1]
+  gap[,ratio_past_2:=placed_past_2/total_past_2]
+  gap[,ratio_past_3:=placed_past_3/total_past_3]
+  gap[,ratio_past_4:=placed_past_4/total_past_4]
   return(list('gap'=gap[,sort(colnames(gap)),with=F],'mapping'=mapping,'poi.dat'=poi.dat,'weather.dat'=weather.dat,'traffic.dat'=traffic.dat,'order.dat'=order.dat))
 }
 
@@ -672,5 +675,10 @@ prepare_test_data=function(dir){
   gap[,total:=NULL]
   gap[,gap:=NULL]
   gap[,weekday:=as.numeric(factor(weekdays(day),levels = weekdays(seq(from = as.Date('2016-01-01'),length.out = 7,by = 'day')),ordered=T))]
+  gap[,ratio_past_1:=placed_past_1/total_past_1]
+  gap[,ratio_past_2:=placed_past_2/total_past_2]
+  gap[,ratio_past_3:=placed_past_3/total_past_3]
+  gap[,ratio_past_4:=placed_past_4/total_past_4]
+  
   return(list('gap'=gap[,sort(colnames(gap)),with=F],'mapping'=mapping,'poi.dat'=poi.dat,'weather.dat'=weather.dat,'traffic.dat'=traffic.dat,'order.dat'=order.dat))
 }
