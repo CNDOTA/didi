@@ -547,7 +547,7 @@ prepare_test_data=function(dir){
   gap[,timeslice1:=NULL]
   gap[,timeslice2:=NULL]
   colnames(gap)[c(7)]='timeslice'
-  gap=gap[,.(id,day,timeslice,weekday,gap,gap_past_1,gap_past_2,gap_past_3,traffic_l1_past1 ,traffic_l1_past2, traffic_l1_past3, traffic_l1_past4,traffic_l2_past1 ,traffic_l2_past2, traffic_l2_past3, traffic_l2_past4,traffic_l3_past1 ,traffic_l3_past2, traffic_l3_past3, traffic_l3_past4)]
+  gap=gap[,.(id,day,timeslice,weekday,gap,gap_past_1,gap_past_2,gap_past_3,gap_past_4,traffic_l1_past1 ,traffic_l1_past2, traffic_l1_past3, traffic_l1_past4,traffic_l2_past1 ,traffic_l2_past2, traffic_l2_past3, traffic_l2_past4,traffic_l3_past1 ,traffic_l3_past2, traffic_l3_past3, traffic_l3_past4)]
   
   # 
   placed=order.dat[,sum(!is.na(driver_id)),by=.(start_district_id,day,timeslice)]
