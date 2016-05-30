@@ -183,14 +183,14 @@ prepare_train_data=function(dir){
   traffic.temp[,timeslice2:=timeslice+2]
   traffic.temp[,timeslice3:=timeslice+3]
   traffic.temp[,timeslice:=NULL]
-  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past1','traffic_l1_past2','traffic_l1_past3','traffic_l1_past4')
+  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past1','traffic_l2_past1','traffic_l3_past1','traffic_l4_past1')
   setkeyv(traffic.temp,c('id','day','timeslice1'))
   
-  gap=traffic.temp[gap][,.(id, traffic_l1_past1, traffic_l1_past2 ,traffic_l1_past3,traffic_l1_past4,day,timeslice1,weekday, gap, gap_past_1,gap_past_2,gap_past_3,gap_past_4)]
+  gap=traffic.temp[gap][,.(id, traffic_l2_past1, traffic_l2_past1 ,traffic_l3_past1,traffic_l4_past1,day,timeslice1,weekday, gap, gap_past_1,gap_past_2,gap_past_3,gap_past_4)]
   colnames(gap)[c(7)]='timeslice'
   
   setkeyv(gap,c('id','day','timeslice'))
-  colnames(traffic.temp)[c(2:5)]=c('traffic_l2_past1','traffic_l2_past2','traffic_l2_past3','traffic_l2_past4')
+  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past2','traffic_l2_past2','traffic_l3_past2','traffic_l4_past2')
   setkeyv(traffic.temp,c('id','day','timeslice2'))
   gap=traffic.temp[gap]
   gap[,timeslice1:=NULL]
@@ -198,13 +198,13 @@ prepare_train_data=function(dir){
   colnames(gap)[c(7)]='timeslice'
   
   setkeyv(gap,c('id','day','timeslice'))
-  colnames(traffic.temp)[c(2:5)]=c('traffic_l3_past1','traffic_l3_past2','traffic_l3_past3','traffic_l3_past4')
+  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past3','traffic_l2_past3','traffic_l3_past3','traffic_l4_past3')
   setkeyv(traffic.temp,c('id','day','timeslice3'))
   gap=traffic.temp[gap]
   gap[,timeslice1:=NULL]
   gap[,timeslice2:=NULL]
   colnames(gap)[c(7)]='timeslice'
-  gap=gap[,.(id,day,timeslice,weekday,gap,gap_past_1,gap_past_2,gap_past_3,gap_past_4,traffic_l1_past1 ,traffic_l1_past2, traffic_l1_past3, traffic_l1_past4,traffic_l2_past1 ,traffic_l2_past2, traffic_l2_past3, traffic_l2_past4,traffic_l3_past1 ,traffic_l3_past2, traffic_l3_past3, traffic_l3_past4)]
+  gap=gap[,.(id,day,timeslice,weekday,gap,gap_past_1,gap_past_2,gap_past_3,gap_past_4,traffic_l1_past1 ,traffic_l1_past2, traffic_l1_past3, traffic_l2_past1,traffic_l2_past2 ,traffic_l2_past3, traffic_l3_past1, traffic_l3_past2,traffic_l3_past3 ,traffic_l4_past1, traffic_l4_past2, traffic_l4_past3)]
   
   # 
   placed=order.dat[,sum(!is.na(driver_id)),by=.(start_district_id,day,timeslice)]
@@ -529,14 +529,14 @@ prepare_test_data=function(dir){
   traffic.temp[,timeslice2:=timeslice+2]
   traffic.temp[,timeslice3:=timeslice+3]
   traffic.temp[,timeslice:=NULL]
-  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past1','traffic_l1_past2','traffic_l1_past3','traffic_l1_past4')
+  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past1','traffic_l2_past1','traffic_l3_past1','traffic_l4_past1')
   setkeyv(traffic.temp,c('id','day','timeslice1'))
   
-  gap=traffic.temp[gap][,.(id, traffic_l1_past1, traffic_l1_past2 ,traffic_l1_past3,traffic_l1_past4,day,timeslice1,weekday, gap, gap_past_1,gap_past_2,gap_past_3,gap_past_4)]
+  gap=traffic.temp[gap][,.(id, traffic_l1_past1, traffic_l2_past1 ,traffic_l3_past1,traffic_l4_past1,day,timeslice1,weekday, gap, gap_past_1,gap_past_2,gap_past_3,gap_past_4)]
   colnames(gap)[c(7)]='timeslice'
   
   setkeyv(gap,c('id','day','timeslice'))
-  colnames(traffic.temp)[c(2:5)]=c('traffic_l2_past1','traffic_l2_past2','traffic_l2_past3','traffic_l2_past4')
+  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past2','traffic_l2_past2','traffic_l3_past2','traffic_l4_past2')
   setkeyv(traffic.temp,c('id','day','timeslice2'))
   gap=traffic.temp[gap]
   gap[,timeslice1:=NULL]
@@ -544,13 +544,13 @@ prepare_test_data=function(dir){
   colnames(gap)[c(7)]='timeslice'
   
   setkeyv(gap,c('id','day','timeslice'))
-  colnames(traffic.temp)[c(2:5)]=c('traffic_l3_past1','traffic_l3_past2','traffic_l3_past3','traffic_l3_past4')
+  colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past3','traffic_l2_past3','traffic_l3_past3','traffic_l4_past3')
   setkeyv(traffic.temp,c('id','day','timeslice3'))
   gap=traffic.temp[gap]
   gap[,timeslice1:=NULL]
   gap[,timeslice2:=NULL]
   colnames(gap)[c(7)]='timeslice'
-  gap=gap[,.(id,day,timeslice,weekday,gap,gap_past_1,gap_past_2,gap_past_3,gap_past_4,traffic_l1_past1 ,traffic_l1_past2, traffic_l1_past3, traffic_l1_past4,traffic_l2_past1 ,traffic_l2_past2, traffic_l2_past3, traffic_l2_past4,traffic_l3_past1 ,traffic_l3_past2, traffic_l3_past3, traffic_l3_past4)]
+  gap=gap[,.(id,day,timeslice,weekday,gap,gap_past_1,gap_past_2,gap_past_3,gap_past_4,traffic_l1_past1 ,traffic_l1_past2, traffic_l1_past3, traffic_l2_past1,traffic_l2_past2 ,traffic_l2_past3, traffic_l3_past1, traffic_l3_past2,traffic_l3_past3 ,traffic_l4_past1, traffic_l4_past2, traffic_l4_past3)]
   
   # 
   placed=order.dat[,sum(!is.na(driver_id)),by=.(start_district_id,day,timeslice)]
