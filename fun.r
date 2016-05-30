@@ -23,8 +23,8 @@ mapeObj1=function(preds,dtrain){
   gaps=getinfo(dtrain,'label')
   grad=sign(preds-gaps)/gaps
   hess=1/gaps
-  grad[which(labels==0)]=0
-  hess[which(labels==0)]=0
+  grad[which(gaps==0)]=0
+  hess[which(gaps==0)]=0
   return(list(grad = grad, hess = hess))
 }
 
