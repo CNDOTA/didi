@@ -48,3 +48,5 @@ params = list(booster='gbtree',
 
 set.seed(1)
 fit = xgb.train(data=dtrain, nround=500, watchlist=watchlist,params=params)
+pred=predict(fit,newdata = dtest)
+write.sub(id=test.dat$gap$id,day = test.dat$gap$day,timeslice = test.dat$gap$timeslice,pred,'rnorm.csv')
