@@ -48,7 +48,7 @@ mapeObj2=function(preds,dtrain){
 
 evalMAPE = function(preds, dtrain) {
   gaps = getinfo(dtrain, "label")
-  err <- abs(gaps-preds)/gaps
+  err = abs(gaps-preds)/gaps
   err[which(gaps==0)]=0
   err=mean(err)
   return(list(metric = "error", value = err))
