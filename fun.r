@@ -4,6 +4,21 @@ mape=function(district_id,timeslot,actual,pred){
   mean(dt[,mean(ape),by=.(district_id)]$V1)
 }
 
+sample.timeslot=function(fixed=T){
+train.all.days=seq(from = as.Date('2016-01-02',tz='GMT'),to=as.Date('2016-01-21',tz='GMT'),by = 'day')
+train.all.weekdays=as.numeric(factor(weekdays(train.all.days),levels = weekdays(seq(from = as.Date('2016-01-01'),length.out = 7,by = 'day')),ordered=T))
+fri=which(train.all.weekdays==1)
+sat=which(train.all.weekdays==2)
+sun=which(train.all.weekdays==3)
+others=which(train.all.weekdays>3)
+train.index=c(sample(fri,1),sample(sat,1),sample(sun,1),sample(others,2,replace = F))
+train.days=train.all.days[-train.index]
+test.days=train.all.days[train.index]
+
+slices=c(46,  58 , 70 , 82 , 94 ,106, 118 ,130, 142)
+if(!fixed){slices=round(slices+runif(9,-1,1))}
+list(train.days,test.days,slices)
+}
 
 mapeObj=function(preds,dtrain){
   gaps=getinfo(dtrain,'label')
