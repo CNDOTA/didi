@@ -35,7 +35,7 @@ dtest=xgb.DMatrix(data=data.matrix(test.gap[,vars,with=F]),
 watchlist = list(train=dtrain, test=dval)
 params = list(booster='gbtree',
               #objective='reg:linear',
-              objective=mapeObj,
+              objective=mapeObj1,
               eval_metric=evalMAPE,           
               #lambda=1,
               subsample=0.7,
