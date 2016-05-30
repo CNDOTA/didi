@@ -32,7 +32,7 @@ dtrain=xgb.DMatrix(data=data.matrix(train.dt[,vars,with=F]),label=train.dt$gap,m
 dval=xgb.DMatrix(data=data.matrix(test.dt[,vars,with=F]),label=test.dt$gap,missing=NA)
 dtest=xgb.DMatrix(data=data.matrix(test.gap[,vars,with=F]),
                   missing=NA)
-watchlist = list(train=dtrain, test=dval)
+watchlist = list(test=dval,train=dtrain)
 params = list(booster='gbtree',
               #objective='reg:linear',
               objective=mapeObj1,
@@ -47,6 +47,6 @@ params = list(booster='gbtree',
 )
 
 set.seed(1)
-fit = xgb.train(data=dtrain, nround=500, watchlist=watchlist,params=params)
+fit = xgb.train(data=dtrain, nround=500, watchlist=watchlist,params=params,early.stop.round = 50,maximize = F)
 pred=predict(fit,newdata = dtest)
 write.sub(id=test.dat$gap$id,day = test.dat$gap$day,timeslice = test.dat$gap$timeslice,pred,'rnorm.csv')
