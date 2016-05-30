@@ -19,8 +19,16 @@ slices=c(46,  58 , 70 , 82 , 94 ,106, 118 ,130, 142)
 if(!fixed){slices=round(slices+runif(9,-1,1))}
 list(train.days,test.days,slices)
 }
+mapeObj1=function(preds,dtrain){
+  gaps=getinfo(dtrain,'label')
+  grad=sign(preds-gaps)/gaps
+  hess=1/gaps
+  grad[which(labels==0)]=0
+  hess[which(labels==0)]=0
+  return(list(grad = grad, hess = hess))
+}
 
-mapeObj=function(preds,dtrain){
+mapeObj2=function(preds,dtrain){
   gaps=getinfo(dtrain,'label')
   delta=(preds-gaps)/gaps
   k=6
