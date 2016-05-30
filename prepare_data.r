@@ -1,5 +1,64 @@
 library(data.table)
 library(stringr)
+
+####### poi data #######
+parse.poi=function(poi,mapping){
+  l1=c()
+  l2=c()
+  l3=c()
+  for (poi.line in poi){
+    line=strsplit(poi.line,'\t')[[1]]
+    
+    for (i in 2:length(line))
+    {
+      e=strsplit(line[i],':')[[1]]
+      if(str_count(e[1],"#")==0){
+        # level 1, append 0 for level 2
+        l1=union(l1,e[1])
+        l2=union(l2,paste0(strsplit(e[1],'#')[[1]],"#0"))
+      }else if (str_count(e[1],"#")==1){
+        # level 2
+        l1=union(l1,strsplit(e[1],'#')[[1]][1])
+        l2=union(l2,e[1])
+      }else if (str_count(e[1],"#")==2){
+        l1=union(l1,strsplit(e[1],'#')[[1]])
+        l2=union(l2,paste0(strsplit(e[1],'#')[[1]][1],"#",strsplit(e[1],'#')[[1]][2]))
+        l3=union(l3,e[1])
+      }
+    }
+  }
+  l1=sort(l1)
+  l2=sort(l2)
+  l3=sort(l3)
+  #return(list("l1"=l1,"l2"=l2,"l3"=l3))
+  m=length(l1)+length(l2)+length(l3)
+  poi.matrix=array(0,c(length(poi),m))
+  poi.names=c(l1,l2,l3)
+  colnames(poi.matrix)=paste0("poi_",poi.names)
+  poi.matrix
+  for(i in 1:length(poi)){
+    
+    line=strsplit(poi[i],'\t')[[1]]
+    rowId=mapping[cluster==line[1],id]
+    for (e in line[2:length(line)]){
+      e.split=strsplit(e,':')[[1]]
+      e.name=e.split[1]
+      if(str_count(e.name,"#")==0){
+        e.name=paste0("poi_",e.name,"#0")
+      }else{
+        e.name=paste0("poi_",e.name)
+      }
+      poi.matrix[rowId,e.name]=as.numeric(e.split[2])
+    }
+    for (e in paste0("poi_",c(l2,l3))){
+      l1.name=strsplit(e,'#')[[1]][1]
+      poi.matrix[rowId,l1.name]=poi.matrix[rowId,l1.name]+poi.matrix[rowId,e]
+    }
+  }
+  
+  poi.matrix
+}
+
 prepare_train_data=function(dir){
   ####### cluster mapping data #######
   mapping=read.table(file =paste0(dir,"cluster_map//cluster_map"))
@@ -9,65 +68,7 @@ prepare_train_data=function(dir){
   poi=readLines(file(paste0(dir,"poi_data//poi_data")))
   colnames(mapping)=c('cluster','id')
   mapping=data.table(mapping)
-  
-  ####### poi data #######
-  parse.poi=function(poi){
-    l1=c()
-    l2=c()
-    l3=c()
-    for (poi.line in poi){
-      line=strsplit(poi.line,'\t')[[1]]
-      
-      for (i in 2:length(line))
-      {
-        e=strsplit(line[i],':')[[1]]
-        if(str_count(e[1],"#")==0){
-          # level 1, append 0 for level 2
-          l1=union(l1,e[1])
-          l2=union(l2,paste0(strsplit(e[1],'#')[[1]],"#0"))
-        }else if (str_count(e[1],"#")==1){
-          # level 2
-          l1=union(l1,strsplit(e[1],'#')[[1]][1])
-          l2=union(l2,e[1])
-        }else if (str_count(e[1],"#")==2){
-          l1=union(l1,strsplit(e[1],'#')[[1]])
-          l2=union(l2,paste0(strsplit(e[1],'#')[[1]][1],"#",strsplit(e[1],'#')[[1]][2]))
-          l3=union(l3,e[1])
-        }
-      }
-    }
-    l1=sort(l1)
-    l2=sort(l2)
-    l3=sort(l3)
-    #return(list("l1"=l1,"l2"=l2,"l3"=l3))
-    m=length(l1)+length(l2)+length(l3)
-    poi.matrix=array(0,c(length(poi),m))
-    poi.names=c(l1,l2,l3)
-    colnames(poi.matrix)=paste0("poi_",poi.names)
-    poi.matrix
-    for(i in 1:length(poi)){
-      
-      line=strsplit(poi[i],'\t')[[1]]
-      rowId=mapping[cluster==line[1],id]
-      for (e in line[2:length(line)]){
-        e.split=strsplit(e,':')[[1]]
-        e.name=e.split[1]
-        if(str_count(e.name,"#")==0){
-          e.name=paste0("poi_",e.name,"#0")
-        }else{
-          e.name=paste0("poi_",e.name)
-        }
-        poi.matrix[rowId,e.name]=as.numeric(e.split[2])
-      }
-      for (e in paste0("poi_",c(l2,l3))){
-        l1.name=strsplit(e,'#')[[1]][1]
-        poi.matrix[rowId,l1.name]=poi.matrix[rowId,l1.name]+poi.matrix[rowId,e]
-      }
-    }
-    
-    poi.matrix
-  }
-  poi.dat=parse.poi(poi)
+  poi.dat=parse.poi(poi,mapping)
   ####### weather data #######
   weather.files=list.files(paste0(dir,"weather_data//"),full.names=T)
   weather.dat=data.frame()
@@ -186,7 +187,7 @@ prepare_train_data=function(dir){
   colnames(traffic.temp)[c(2:5)]=c('traffic_l1_past1','traffic_l2_past1','traffic_l3_past1','traffic_l4_past1')
   setkeyv(traffic.temp,c('id','day','timeslice1'))
   
-  gap=traffic.temp[gap][,.(id, traffic_l2_past1, traffic_l2_past1 ,traffic_l3_past1,traffic_l4_past1,day,timeslice1,weekday, gap, gap_past_1,gap_past_2,gap_past_3,gap_past_4)]
+  gap=traffic.temp[gap][,.(id, traffic_l1_past1, traffic_l2_past1 ,traffic_l3_past1,traffic_l4_past1,day,timeslice1,weekday, gap, gap_past_1,gap_past_2,gap_past_3,gap_past_4)]
   colnames(gap)[c(7)]='timeslice'
   
   setkeyv(gap,c('id','day','timeslice'))
@@ -322,6 +323,8 @@ prepare_train_data=function(dir){
   gap[,ratio_past_2:=placed_past_2/total_past_2]
   gap[,ratio_past_3:=placed_past_3/total_past_3]
   gap[,ratio_past_4:=placed_past_4/total_past_4]
+  poi.dat=data.table(poi.dat)
+  poi.dat[,id:=.I]
   return(list('gap'=gap[,sort(colnames(gap)),with=F],'mapping'=mapping,'poi.dat'=poi.dat,'weather.dat'=weather.dat,'traffic.dat'=traffic.dat,'order.dat'=order.dat))
 }
 
@@ -341,64 +344,8 @@ prepare_test_data=function(dir){
   colnames(mapping)=c('cluster','id')
   mapping=data.table(mapping)
   
-  ####### poi data #######
-  parse.poi=function(poi){
-    l1=c()
-    l2=c()
-    l3=c()
-    for (poi.line in poi){
-      line=strsplit(poi.line,'\t')[[1]]
-      
-      for (i in 2:length(line))
-      {
-        e=strsplit(line[i],':')[[1]]
-        if(str_count(e[1],"#")==0){
-          # level 1, append 0 for level 2
-          l1=union(l1,e[1])
-          l2=union(l2,paste0(strsplit(e[1],'#')[[1]],"#0"))
-        }else if (str_count(e[1],"#")==1){
-          # level 2
-          l1=union(l1,strsplit(e[1],'#')[[1]][1])
-          l2=union(l2,e[1])
-        }else if (str_count(e[1],"#")==2){
-          l1=union(l1,strsplit(e[1],'#')[[1]])
-          l2=union(l2,paste0(strsplit(e[1],'#')[[1]][1],"#",strsplit(e[1],'#')[[1]][2]))
-          l3=union(l3,e[1])
-        }
-      }
-    }
-    l1=sort(l1)
-    l2=sort(l2)
-    l3=sort(l3)
-    #return(list("l1"=l1,"l2"=l2,"l3"=l3))
-    m=length(l1)+length(l2)+length(l3)
-    poi.matrix=array(0,c(length(poi),m))
-    poi.names=c(l1,l2,l3)
-    colnames(poi.matrix)=paste0("poi_",poi.names)
-    poi.matrix
-    for(i in 1:length(poi)){
-      
-      line=strsplit(poi[i],'\t')[[1]]
-      rowId=mapping[cluster==line[1],id]
-      for (e in line[2:length(line)]){
-        e.split=strsplit(e,':')[[1]]
-        e.name=e.split[1]
-        if(str_count(e.name,"#")==0){
-          e.name=paste0("poi_",e.name,"#0")
-        }else{
-          e.name=paste0("poi_",e.name)
-        }
-        poi.matrix[rowId,e.name]=as.numeric(e.split[2])
-      }
-      for (e in paste0("poi_",c(l2,l3))){
-        l1.name=strsplit(e,'#')[[1]][1]
-        poi.matrix[rowId,l1.name]=poi.matrix[rowId,l1.name]+poi.matrix[rowId,e]
-      }
-    }
-    
-    poi.matrix
-  }
-  poi.dat=parse.poi(poi)
+
+  poi.dat=parse.poi(poi,mapping)
   ####### weather data #######
   weather.files=list.files(paste0(dir,"weather_data//"),full.names=T)
   weather.dat=data.frame()
@@ -679,6 +626,7 @@ prepare_test_data=function(dir){
   gap[,ratio_past_2:=placed_past_2/total_past_2]
   gap[,ratio_past_3:=placed_past_3/total_past_3]
   gap[,ratio_past_4:=placed_past_4/total_past_4]
-  
+  poi.dat=data.table(poi.dat)
+  poi.dat[,id:=.I]
   return(list('gap'=gap[,sort(colnames(gap)),with=F],'mapping'=mapping,'poi.dat'=poi.dat,'weather.dat'=weather.dat,'traffic.dat'=traffic.dat,'order.dat'=order.dat))
 }
