@@ -47,5 +47,4 @@ params = list(booster='gbtree',
 )
 
 set.seed(1)
-history=xgb.train(params =params,data=dtrain,nfold = 5,verbose=T,
-               early.stop.round=50,maximize=T,nrounds=1000)
+fit = xgb.train(data=dtrain, nround=500, watchlist=watchlist,params=params)
