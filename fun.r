@@ -45,3 +45,9 @@ evalMAPE = function(preds, dtrain) {
   err=mean(err)
   return(list(metric = "error", value = err))
 }
+
+write.sub=function(id,day,timeslice,pred,filename='sub1.csv'){
+    timeslot=paste0(day,'-',timeslice)
+    sub=data.frame(id,timeslot,pred)
+    write.table(sub,row.names = F,file = filename,sep = ',',col.names = F,quote = F)
+}
