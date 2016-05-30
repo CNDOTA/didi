@@ -47,6 +47,11 @@ params = list(booster='gbtree',
 )
 
 set.seed(1)
-fit = xgb.train(data=dtrain, nround=500, watchlist=watchlist,params=params,early.stop.round = 50,maximize = F)
-pred=predict(fit,newdata = dtest)
+fit = xgb.train(data=dtrain, nround=1000, watchlist=watchlist,params=params,early.stop.round = 50,maximize = F)
+# train with all data
+dat.train=train.gap[day!=as.Date('2016-01-01'),]
+dtrain.all=xgb.DMatrix(data=data.matrix(dat.train[,vars,with=F]),label=dat.train$gap,missing=NA)
+fit.new = xgb.train(data=dtrain.all, nround=500,params=params)
+
+pred=predict(fit.new,newdata = dtest)
 write.sub(id=test.dat$gap$id,day = test.dat$gap$day,timeslice = test.dat$gap$timeslice,pred,'rnorm.csv')
