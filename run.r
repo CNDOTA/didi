@@ -22,7 +22,7 @@ vars.id=sapply(c(1:66),function(x) paste0('id_',x))
 # train xgb model
 # without poi variables for now
 vars=c("gap_past_1"      ,        "gap_past_2"     ,         "gap_past_3"           ,  
-         "id"        ,                  
+        #"id"        ,                  
         "placed_past_1"   ,        "placed_past_2"      ,       "placed_past_3"   ,               
          "timeslice"  ,                  
          "total_past_1"           ,"total_past_2"     ,       "total_past_3"     ,       
