@@ -64,4 +64,5 @@ dtrain.all=xgb.DMatrix(data=data.matrix(dat.train[,vars,with=F]),label=dat.train
 fit.new = xgb.train(data=dtrain.all, nround=500,params=params)
 
 pred=predict(fit.new,newdata = dtest)
+pred[pred<1]=1
 write.sub(id=test.dat$gap$id,day = test.dat$gap$day,timeslice = test.dat$gap$timeslice,pred,'rnorm.csv')
