@@ -56,12 +56,12 @@ params = list(booster='gbtree',
               watchlist =watchlist
 )
 
-set.seed(1)
+#set.seed(1)
 fit = xgb.train(data=dtrain, nround=1000, watchlist=watchlist,params=params,early.stop.round = 50,maximize = F)
 # train with all data
 dat.train=train.gap[day!=as.Date('2016-01-01'),]
 dtrain.all=xgb.DMatrix(data=data.matrix(dat.train[,vars,with=F]),label=dat.train$gap,missing=NA)
-fit.new = xgb.train(data=dtrain.all, nround=500,params=params)
+fit.new = xgb.train(data=dtrain.all, nround=fit$bestInd,params=params)
 
 pred=predict(fit.new,newdata = dtest)
 pred[pred<1]=1
