@@ -13,7 +13,7 @@ train.gap=train.dat$gap
 test.gap=test.dat$gap
 
 # use poi
-poi.dt=data.table(train.dat$poi)
+poi.dt=data.table(train.dat$poi.dat)
 setkey(poi.dt,'id')
 setkey(train.gap,'id')
 setkey(test.gap,'id')
