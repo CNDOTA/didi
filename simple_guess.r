@@ -1,4 +1,4 @@
-# a simple guess (no idea how it performs)
+# a simple guess gives leaderboard score 0.29+
 
 source('prepare_data.r')
 source('fun.r')
