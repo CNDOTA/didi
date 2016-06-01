@@ -11,6 +11,15 @@ save(train.dat,test.dat,file='didi.dat')# for future use
 
 train.gap=train.dat$gap
 test.gap=test.dat$gap
+
+# use poi
+poi.dt=data.table(train.dat$poi)
+setkey(poi.dt,'id')
+setkey(train.gap,'id')
+setkey(test.gap,'id')
+train.gap=train.gap[poi.dt]
+test.gap=train.gap[poi.dt]
+
 # id to dummy variables
 for(i in 1:66){
 train.gap[,(paste0('id_',i)):=as.numeric(id==i)]
@@ -32,7 +41,7 @@ vars=c("gap_past_1"      ,        "gap_past_2"     ,         "gap_past_3"       
          "weather_condition_past1", "weather_condition_past2", "weather_condition_past3",
          "weather_pm25_past1"  ,    "weather_pm25_past2"   ,   "weather_pm25_past3"   , 
          "weather_temp_past1"  ,    "weather_temp_past2" ,     "weather_temp_past3"   , 
-         "weekday" ,vars.id)
+         "weekday" ,vars.id,colnames(poi.dt))[1:300]
          
 train=sample.timeslot(T)# T means using the exact timeslots for leaderboard; F meas using random timeslots
 train.dt=train.gap[day %in% train[[1]] ,c(vars,'gap'),with=F]
