@@ -46,7 +46,7 @@ watchlist = list(test=dval,train=dtrain)
 params = list(booster='gbtree',
               #objective='reg:linear',
               objective=mapeObj1,
-              eval_metric=evalMAPE,           
+              eval_metric=evalMAPE1,           
               #lambda=1,
               subsample=0.7,
               colsample_bytree=0.6,
