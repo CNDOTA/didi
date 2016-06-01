@@ -46,8 +46,17 @@ mapeObj2=function(preds,dtrain){
   return(list(grad = grad, hess = hess))
 }
 
-evalMAPE = function(preds, dtrain) {
+evalMAPE1 = function(preds, dtrain) {
   gaps = getinfo(dtrain, "label")
+  err = abs(gaps-preds)/gaps
+  err[which(gaps==0)]=0
+  err=mean(err)
+  return(list(metric = "error", value = err))
+}
+
+evalMAPE2 = function(preds, dtrain) {
+  gaps = getinfo(dtrain, "label")
+  preds[preds<1]=1
   err = abs(gaps-preds)/gaps
   err[which(gaps==0)]=0
   err=mean(err)
