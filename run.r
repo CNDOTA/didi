@@ -12,30 +12,6 @@ save(train.dat,test.dat,file='didi.dat')# for future use
 train.gap=train.dat$gap
 test.gap=test.dat$gap
 
-train.gap[is.na(gap_past_1),gap_past_1:=0]
-train.gap[is.na(gap_past_2),gap_past_2:=0]
-train.gap[is.na(gap_past_3),gap_past_3:=0]
-
-train.gap[is.na(placed_past_1),placed_past_1:=0]
-train.gap[is.na(placed_past_2),placed_past_2:=0]
-train.gap[is.na(placed_past_3),placed_past_3:=0]
-
-train.gap[is.na(total_past_1),total_past_1:=0]
-train.gap[is.na(total_past_2),total_past_2:=0]
-train.gap[is.na(total_past_3),total_past_3:=0]
-
-test.gap[is.na(gap_past_1),gap_past_1:=0]
-test.gap[is.na(gap_past_2),gap_past_2:=0]
-test.gap[is.na(gap_past_3),gap_past_3:=0]
-
-test.gap[is.na(placed_past_1),placed_past_1:=0]
-test.gap[is.na(placed_past_2),placed_past_2:=0]
-test.gap[is.na(placed_past_3),placed_past_3:=0]
-
-test.gap[is.na(total_past_1),total_past_1:=0]
-test.gap[is.na(total_past_2),total_past_2:=0]
-test.gap[is.na(total_past_3),total_past_3:=0]
-
 # use poi
 poi.dt=data.table(train.dat$poi)
 setkey(poi.dt,'id')
