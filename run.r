@@ -14,6 +14,7 @@ test.gap=test.dat$gap
 
 # use poi
 poi.dt=data.table(train.dat$poi.dat)
+poi.dt[,id:=.I]
 setkey(poi.dt,'id')
 setkey(train.gap,'id')
 setkey(test.gap,'id')
