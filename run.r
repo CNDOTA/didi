@@ -12,6 +12,30 @@ save(train.dat,test.dat,file='didi.dat')# for future use
 train.gap=train.dat$gap
 test.gap=test.dat$gap
 
+train.gap[is.na(gap_past_1),gap_past_1:=0]
+train.gap[is.na(gap_past_2),gap_past_2:=0]
+train.gap[is.na(gap_past_3),gap_past_3:=0]
+
+train.gap[is.na(placed_past_1),placed_past_1:=0]
+train.gap[is.na(placed_past_2),placed_past_2:=0]
+train.gap[is.na(placed_past_3),placed_past_3:=0]
+
+train.gap[is.na(total_past_1),total_past_1:=0]
+train.gap[is.na(total_past_2),total_past_2:=0]
+train.gap[is.na(total_past_3),total_past_3:=0]
+
+test.gap[is.na(gap_past_1),gap_past_1:=0]
+test.gap[is.na(gap_past_2),gap_past_2:=0]
+test.gap[is.na(gap_past_3),gap_past_3:=0]
+
+test.gap[is.na(placed_past_1),placed_past_1:=0]
+test.gap[is.na(placed_past_2),placed_past_2:=0]
+test.gap[is.na(placed_past_3),placed_past_3:=0]
+
+test.gap[is.na(total_past_1),total_past_1:=0]
+test.gap[is.na(total_past_2),total_past_2:=0]
+test.gap[is.na(total_past_3),total_past_3:=0]
+
 # use poi
 poi.dt=data.table(train.dat$poi)
 setkey(poi.dt,'id')
@@ -56,7 +80,7 @@ params = list(booster='gbtree',
               #objective='reg:linear',
               objective=mapeObj3,
               eval_metric=evalMAPE2,           
-              #lambda=1,
+              lambda=1,
               subsample=0.7,
               colsample_bytree=0.6,
               #min_child_weight=minchildweight,
@@ -66,7 +90,7 @@ params = list(booster='gbtree',
 )
 
 #set.seed(1)
-fit = xgb.train(data=dtrain, nround=1000, watchlist=watchlist,params=params,early.stop.round = 50,maximize = F)
+fit = xgb.train(data=dtrain, nround=10000, watchlist=watchlist,params=params,early.stop.round = 50,maximize = F)
 # train with all data
 dat.train=train.gap[day!=as.Date('2016-01-01'),]
 dtrain.all=xgb.DMatrix(data=data.matrix(dat.train[,vars,with=F]),label=dat.train$gap,missing=NA)
