@@ -18,7 +18,7 @@ setkey(poi.dt,'id')
 setkey(train.gap,'id')
 setkey(test.gap,'id')
 train.gap=train.gap[poi.dt]
-test.gap=train.gap[poi.dt]
+test.gap=test.gap[poi.dt]
 
 # id to dummy variables
 for(i in 1:66){
@@ -44,7 +44,7 @@ vars=c("gap_past_1"      ,        "gap_past_2"     ,         "gap_past_3"       
          "weekday" ,vars.id,colnames(poi.dt))[1:300]
          
 train=sample.timeslot(T)# T means using the exact timeslots for leaderboard; F meas using random timeslots
-train.dt=train.gap[day %in% train[[1]] ,c(vars,'gap'),with=F]
+train.dt=train.gap[day %in% train[[1]] & timeslice>30 ,c(vars,'gap'),with=F]
 test.dt=train.gap[day %in% train[[2]] & timeslice %in% train[[3]],c(vars,'gap'),with=F]
 
 dtrain=xgb.DMatrix(data=data.matrix(train.dt[,vars,with=F]),label=train.dt$gap,missing=NA)
