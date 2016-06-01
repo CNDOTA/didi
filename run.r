@@ -62,8 +62,7 @@ params = list(booster='gbtree',
               colsample_bytree=0.6,
               #min_child_weight=minchildweight,
               max_depth=8,
-              eta=0.05,
-              watchlist =watchlist
+              eta=0.05
 )
 
 #set.seed(1)
@@ -71,7 +70,7 @@ fit = xgb.train(data=dtrain, nround=10000, watchlist=watchlist,params=params,ear
 # train with all data
 dat.train=train.gap[day!=as.Date('2016-01-01'),]
 dtrain.all=xgb.DMatrix(data=data.matrix(dat.train[,vars,with=F]),label=dat.train$gap,missing=NA)
-fit.new = xgb.train(data=dtrain.all, nround=fit$bestInd,params=params)
+fit.new = xgb.train(data=dtrain.all, nround=fit$bestInd,params=params,watchlist = list(train=dtrain.all))
 
 pred=predict(fit.new,newdata = dtest)
 pred[pred<1]=1
