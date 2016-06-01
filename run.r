@@ -62,7 +62,7 @@ params = list(booster='gbtree',
               colsample_bytree=0.6,
               #min_child_weight=minchildweight,
               max_depth=8,
-              eta=0.05
+              eta=0.02
 )
 
 #set.seed(1)
