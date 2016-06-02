@@ -1,4 +1,4 @@
-# run this script from will prepare data and train model and then generate a submission file.
+# run this script to generate a submission file.
 source('prepare_data.r')
 source('fun.r')
 library(xgboost)
