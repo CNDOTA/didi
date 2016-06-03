@@ -133,9 +133,9 @@ prepare_train_data=function(dir){
   setkey(order.dat,'start_district_hash')
   order.dat=order.dat[mapping]
   colnames(order.dat)[8]='start_district_id'
-  setkey(order.dat,'dest_district_hash')
-  order.dat=order.dat[mapping]
-  colnames(order.dat)[9]='dest_district_id'
+  #setkey(order.dat,'dest_district_hash')
+  #order.dat=order.dat[mapping]
+  #colnames(order.dat)[9]='dest_district_id'
   order.dat[,start_district_hash:=NULL]
   order.dat[,dest_district_hash:=NULL]
   order.dat[,datetime:=as.POSIXct(datetime,tz='GMT')]
@@ -417,9 +417,9 @@ prepare_test_data=function(dir){
   setkey(order.dat,'start_district_hash')
   order.dat=order.dat[mapping]
   colnames(order.dat)[8]='start_district_id'
-  setkey(order.dat,'dest_district_hash')
-  order.dat=order.dat[mapping]
-  colnames(order.dat)[9]='dest_district_id'
+  #setkey(order.dat,'dest_district_hash')
+  #order.dat=order.dat[mapping]
+  #colnames(order.dat)[9]='dest_district_id'
   order.dat[,start_district_hash:=NULL]
   order.dat[,dest_district_hash:=NULL]
   order.dat[,datetime:=as.POSIXct(datetime,tz='GMT')]
