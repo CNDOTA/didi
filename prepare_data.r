@@ -1,6 +1,12 @@
 library(data.table)
 library(stringr)
 
+# parse traffic
+  helper1=function(x){
+    res=double(length(x))
+    for(i in 1:length(x)) res[i]=as.numeric(strsplit(as.character(x[i]),':')[[1]][2])
+    res
+  }
 ####### poi data #######
 parse.poi=function(poi,mapping){
   l1=c()
@@ -99,11 +105,7 @@ prepare_train_data=function(dir){
   setkey(mapping,'cluster')
   traffic.dat=traffic.dat[mapping]
   traffic.dat[,V1:=NULL]
-  helper1=function(x){
-    res=double(length(x))
-    for(i in 1:length(x)) res[i]=strsplit(as.character(x[i]),':')[[1]][2]
-    res
-  }
+
   traffic.dat[,traffic_l1:=helper1(V2)]
   traffic.dat[,traffic_l2:=helper1(V3)]
   traffic.dat[,traffic_l3:=helper1(V4)]
@@ -387,11 +389,6 @@ prepare_test_data=function(dir){
   setkey(mapping,'cluster')
   traffic.dat=traffic.dat[mapping]
   traffic.dat[,V1:=NULL]
-  helper1=function(x){
-    res=double(length(x))
-    for(i in 1:length(x)) res[i]=strsplit(as.character(x[i]),':')[[1]][2]
-    res
-  }
   traffic.dat[,traffic_l1:=helper1(V2)]
   traffic.dat[,traffic_l2:=helper1(V3)]
   traffic.dat[,traffic_l3:=helper1(V4)]
