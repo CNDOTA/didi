@@ -1,8 +1,8 @@
 library(data.table)
 library(stringr)
 
-# parse traffic
-  helper1=function(x){
+####### parse traffic data #######
+helper1=function(x){
     res=double(length(x))
     for(i in 1:length(x)) res[i]=as.numeric(strsplit(as.character(x[i]),':')[[1]][2])
     res
